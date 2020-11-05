@@ -23,7 +23,11 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "lwip/netif.h"
+#include "lwip/tcpip.h"
+#include "ethernetif.h"
+#include "app_ethernet.h"
+#include "httpserver-netconn.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -41,6 +45,12 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+struct netif gnetif; /* network interface structure */
+/* Semaphore to signal Ethernet Link state update */
+osSemaphoreId Netif_IRQSemaphore = NULL;
+/* Ethernet link thread Argument */
+struct enc_irq_str irq_arg;
+
 SPI_HandleTypeDef hspi1;
 
 osThreadId defaultTaskHandle;
@@ -53,6 +63,11 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_SPI1_Init(void);
 void StartDefaultTask(void const * argument);
+static void Netif_Config(void);
+
+//static void StartThread(void const * argument);
+//static void ToggleLed3(void const * argument);
+//static void BSP_Config(void);
 
 /* USER CODE BEGIN PFP */
 
@@ -275,7 +290,78 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+/**
+  * @brief  Initializes the lwIP stack
+  * @param  None
+  * @retval None
+  */
+static void Netif_Config(void)
+{
+    struct ip_addr ipaddr;
+    struct ip_addr netmask;
+    struct ip_addr gw;
 
+    /* IP address setting */
+    IP4_ADDR(&ipaddr, IP_ADDR0, IP_ADDR1, IP_ADDR2, IP_ADDR3);
+    IP4_ADDR(&netmask, NETMASK_ADDR0, NETMASK_ADDR1 , NETMASK_ADDR2, NETMASK_ADDR3);
+    IP4_ADDR(&gw, GW_ADDR0, GW_ADDR1, GW_ADDR2, GW_ADDR3);
+
+    /* create a binary semaphore used for informing ethernetif of frame reception */
+    osSemaphoreDef(Netif_SEM);
+    Netif_IRQSemaphore = osSemaphoreCreate(osSemaphore(Netif_SEM) , 1);
+
+    /* - netif_add(struct netif *netif, struct ip_addr *ipaddr,
+    struct ip_addr *netmask, struct ip_addr *gw,
+    void *state, err_t (* init)(struct netif *netif),
+    err_t (* input)(struct pbuf *p, struct netif *netif))
+
+    Adds your network interface to the netif_list. Allocate a struct
+    netif and pass a pointer to this structure as the first argument.
+    Give pointers to cleared ip_addr structures when using DHCP,
+    or fill them with sane numbers otherwise. The state pointer may be NULL.
+
+    The init function pointer must point to a initialization function for
+    your ethernet netif interface. The following code illustrates it's use.*/
+
+    netif_add(&gnetif, &ipaddr, &netmask, &gw, NULL, &ethernetif_init, &tcpip_input);
+
+    /*  Registers the default network interface. */
+    netif_set_default(&gnetif);
+
+    if (netif_is_link_up(&gnetif))
+    {
+        /* When the netif is fully configured this function must be called.*/
+        netif_set_up(&gnetif);
+    }
+    else
+    {
+        /* When the netif link is down this function must be called */
+        netif_set_down(&gnetif);
+    }
+
+    /* Set the link callback function, this function is called on change of link status*/
+    netif_set_link_callback(&gnetif, ethernetif_update_config);
+
+    irq_arg.netif = &gnetif;
+    irq_arg.semaphore = Netif_IRQSemaphore;
+    /* Create the Ethernet IRQ handler thread */
+    osThreadDef(IrqThr, ethernetif_process_irq, osPriorityRealtime, 0, configMINIMAL_STACK_SIZE * 2);
+
+    osThreadCreate (osThread(IrqThr), &irq_arg);
+}
+
+/**
+  * @brief  EXTI line detection callbacks
+  * @param  GPIO_Pin: Specifies the pins connected EXTI line
+  * @retval None
+  */
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+    if (GPIO_Pin == ENC_INT_PIN)
+    {
+        ethernet_irq_handler(Netif_IRQSemaphore);
+    }
+}
 /* USER CODE END 4 */
 
 /* USER CODE BEGIN Header_StartDefaultTask */
@@ -288,11 +374,39 @@ static void MX_GPIO_Init(void)
 void StartDefaultTask(void const * argument)
 {
   /* USER CODE BEGIN 5 */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
+
+    /* Create tcp_ip stack thread */
+    tcpip_init(NULL, NULL);
+
+    /* Initilaize the LwIP stack */
+    Netif_Config();
+
+    /* Initialize webserver demo */
+    http_server_netconn_init();
+
+    /* Notify user about the netwoek interface config */
+    User_notification(&gnetif);
+
+#ifdef USE_DHCP
+    /* Start DHCPClient */
+#if defined(__GNUC__)
+    osThreadDef(DHCP, DHCP_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE * 5);
+#else
+    osThreadDef(DHCP, DHCP_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE * 2);
+#endif
+
+    osThreadCreate (osThread(DHCP), &gnetif);
+#endif
+
+    /* Start toogleLed3 task : Toggle LED3  every 250ms */
+    osThreadDef(LED3, ToggleLed3, osPriorityLow, 0, configMINIMAL_STACK_SIZE);
+    osThreadCreate (osThread(LED3), NULL);
+
+    for( ;; )
+    {
+        /* Delete the Init Thread */
+        osThreadTerminate(NULL);
+    }
   /* USER CODE END 5 */
 }
 

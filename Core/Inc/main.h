@@ -32,7 +32,30 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <stdbool.h>
 
+/* Exported types ------------------------------------------------------------*/
+/* Exported constants --------------------------------------------------------*/
+#define USE_LCD        /* enable LCD  */
+#define USE_DHCP       /* enable DHCP, if disabled static address is used*/
+
+/*Static IP ADDRESS*/
+#define IP_ADDR0   192
+#define IP_ADDR1   168
+#define IP_ADDR2   1
+#define IP_ADDR3   50
+
+/*NETMASK*/
+#define NETMASK_ADDR0   255
+#define NETMASK_ADDR1   255
+#define NETMASK_ADDR2   255
+#define NETMASK_ADDR3   0
+
+/*Gateway Address*/
+#define GW_ADDR0   192
+#define GW_ADDR1   168
+#define GW_ADDR2   1
+#define GW_ADDR3   1
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
