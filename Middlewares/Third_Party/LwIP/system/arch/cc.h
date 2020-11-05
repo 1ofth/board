@@ -45,7 +45,7 @@ typedef signed long s32_t;
 typedef u32_t mem_ptr_t;
 typedef int sys_prot_t;
 
-#define LWIP_PROVIDE_ERRNO
+//#define LWIP_PROVIDE_ERRNO
 
 #if defined (__GNUC__) & !defined (__CC_ARM)
 

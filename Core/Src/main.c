@@ -362,6 +362,21 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
         ethernet_irq_handler(Netif_IRQSemaphore);
     }
 }
+/**
+  * @brief  Toggle LED3 task
+  * @param  pvParameters not used
+  * @retval None
+  */
+static void ToggleLed3(void const * argument)
+{
+    for( ;; )
+    {
+        /* Toggle LED3 each 250ms */
+        HAL_GPIO_TogglePin(GPIOE, GPIO_PIN_0);
+
+        osDelay(250);
+    }
+}
 /* USER CODE END 4 */
 
 /* USER CODE BEGIN Header_StartDefaultTask */
