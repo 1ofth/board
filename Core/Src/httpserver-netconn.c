@@ -33,6 +33,7 @@
 #include "string.h"
 #include "httpserver-netconn.h"
 #include "cmsis_os.h"
+#include <stdio.h>
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/

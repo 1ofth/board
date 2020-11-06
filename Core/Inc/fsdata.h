@@ -47,4 +47,12 @@ struct fsdata_file {
 #endif /* HTTPD_PRECALCULATED_CHECKSUM */
 };
 
+extern const struct fsdata_file file__STM32F4xx_files_logo_jpg[1];
+extern const struct fsdata_file file__STM32F4xx_files_ST_gif[1];
+extern const struct fsdata_file file__STM32F4xx_files_stm32_jpg[1];
+extern const struct fsdata_file file__404_html[1];
+extern const struct fsdata_file file__STM32F4xx_html[1];
+
+#define FS_ROOT file__STM32F4xx_html
+#define FS_NUMFILES 5
 #endif /* __FSDATA_H__ */

@@ -191,10 +191,7 @@ extern const ip_addr_t ip_addr_broadcast;
  * @arg mask network identifier mask
  * @return !0 if the network identifiers of both address match
  */
-#define ip_addr_netcmp(addr1, addr2, mask) (((addr1)->addr & \
-                                              (mask)->addr) == \
-                                             ((addr2)->addr & \
-                                              (mask)->addr))
+#define ip_addr_netcmp(addr1, addr2, mask) (((addr1)->addr & (mask)->addr) == ((addr2)->addr & (mask)->addr))
 #define ip_addr_cmp(addr1, addr2) ((addr1)->addr == (addr2)->addr)
 
 #define ip_addr_isany(addr1) ((addr1) == NULL || (addr1)->addr == IPADDR_ANY)
