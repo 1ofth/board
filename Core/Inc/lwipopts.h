@@ -208,8 +208,18 @@ The STM32F4x7 allows computing and verifying the IP, UDP, TCP and ICMP checksums
    -----------------------------------
 */
 
-#define LWIP_DEBUG                      0
-
+#define LWIP_DEBUG                      1
+#define ICMP_DEBUG LWIP_DBG_ON
+#define SOCKETS_DEBUG LWIP_DBG_ON
+#define API_MSG_DEBUG LWIP_DBG_ON
+#define API_LIB_DEBUG LWIP_DBG_ON
+#define PBUF_DEBUG LWIP_DBG_ON
+#define NETIF_DEBUG LWIP_DBG_ON
+#define ETHARP_DEBUG LWIP_DBG_ON
+#define IP_DEBUG LWIP_DBG_ON
+#define INET_DEBUG LWIP_DBG_ON
+#define TCPIP_DEBUG LWIP_DBG_ON
+#define AUTOIP_DEBUG LWIP_DBG_ON
 
 /*
    ---------------------------------

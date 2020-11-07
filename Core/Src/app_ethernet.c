@@ -57,7 +57,7 @@ void User_notification(struct netif *netif)
     /* Update DHCP state machine */
     DHCP_state = DHCP_START;
 #endif /* USE_DHCP */
-    HAL_GPIO_WritePin(GPIOE, GPIO_PIN_0, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(GPIOD, LD4_Pin, GPIO_PIN_SET);
     /* Turn On LED 3 to indicate ETH and LwIP init success*/
 //    BSP_LED_On(LED3);
 }
@@ -70,7 +70,7 @@ void User_notification(struct netif *netif)
 
     /* Turn On LED 4 to indicate ETH and LwIP init error */
 //    BSP_LED_On(LED4);
-      HAL_GPIO_WritePin(GPIOE, GPIO_PIN_1, GPIO_PIN_SET);
+      HAL_GPIO_WritePin(GPIOD, LD5_Pin, GPIO_PIN_SET);
   }
 }
 
@@ -101,9 +101,9 @@ void ethernetif_notify_conn_changed(struct netif *netif)
     netif_set_up(netif);
 
   //   BSP_LED_Off(LED4);
-      HAL_GPIO_WritePin(GPIOE, GPIO_PIN_1, GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(GPIOD, LD5_Pin, GPIO_PIN_RESET);
 //    BSP_LED_On(LED3);
-      HAL_GPIO_WritePin(GPIOE, GPIO_PIN_0, GPIO_PIN_SET);
+      HAL_GPIO_WritePin(GPIOD, LD4_Pin, GPIO_PIN_SET);
   }
   else
   {
@@ -116,9 +116,9 @@ void ethernetif_notify_conn_changed(struct netif *netif)
     netif_set_down(netif);
 
 //    BSP_LED_On(LED4);
-      HAL_GPIO_WritePin(GPIOE, GPIO_PIN_1, GPIO_PIN_SET);
+      HAL_GPIO_WritePin(GPIOD, LD5_Pin, GPIO_PIN_SET);
 //     BSP_LED_Off(LED3);
-      HAL_GPIO_WritePin(GPIOE, GPIO_PIN_0, GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(GPIOD, LD4_Pin, GPIO_PIN_RESET);
   }
 }
 
@@ -161,7 +161,7 @@ void dhcp_do(struct netif *netif)
           dhcp_stop(netif);
 
 //    BSP_LED_On(LED3);
-    HAL_GPIO_WritePin(GPIOE, GPIO_PIN_0, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(GPIOD, LD4_Pin, GPIO_PIN_SET);
         }
         else
         {
@@ -180,7 +180,7 @@ void dhcp_do(struct netif *netif)
             netif_set_addr(netif, &ipaddr , &netmask, &gw);
 
               //    BSP_LED_On(LED4);
-      HAL_GPIO_WritePin(GPIOE, GPIO_PIN_0, GPIO_PIN_SET);
+      HAL_GPIO_WritePin(GPIOD, LD5_Pin, GPIO_PIN_SET);
           }
         }
       }

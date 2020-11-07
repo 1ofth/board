@@ -61,7 +61,7 @@ osThreadId defaultTaskHandle;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
-static void MX_SPI1_Init(void);
+//static void MX_SPI1_Init(void);
 void StartDefaultTask(void const * argument);
 static void Netif_Config(void);
 
@@ -77,7 +77,16 @@ static void Netif_Config(void);
 /* USER CODE BEGIN 0 */
 
 /* USER CODE END 0 */
+static void ToggleLed6(void const * argument)
+{
+    for( ;; )
+    {
+        /* Toggle LED3 each 250ms */
+        HAL_GPIO_TogglePin(GPIOD, LD6_Pin);
 
+        osDelay(250);
+    }
+}
 /**
   * @brief  The application entry point.
   * @retval int
@@ -106,7 +115,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_SPI1_Init();
+//  MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -126,11 +135,20 @@ int main(void)
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
   /* USER CODE END RTOS_QUEUES */
-
+    /* Start toogleLed3 task : Toggle LED3  every 250ms */
+//    osThreadDef(LED3, ToggleLed6, osPriorityLow, 0, configMINIMAL_STACK_SIZE);
+//    osThreadCreate (osThread(LED3), NULL);
   /* Create the thread(s) */
   /* definition and creation of defaultTask */
-  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
-  defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
+//  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
+//  defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
+    /* Init thread */
+#if defined(__GNUC__)
+    osThreadDef(Start, StartDefaultTask, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 5);
+#else
+    osThreadDef(Start, StartDefaultTask, osPriorityNormal, 0, 512);
+#endif
+    defaultTaskHandle =  osThreadCreate (osThread(Start), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -199,38 +217,38 @@ void SystemClock_Config(void)
   * @param None
   * @retval None
   */
-static void MX_SPI1_Init(void)
-{
-
-  /* USER CODE BEGIN SPI1_Init 0 */
-
-  /* USER CODE END SPI1_Init 0 */
-
-  /* USER CODE BEGIN SPI1_Init 1 */
-
-  /* USER CODE END SPI1_Init 1 */
-  /* SPI1 parameter configuration*/
-  hspi1.Instance = SPI1;
-  hspi1.Init.Mode = SPI_MODE_MASTER;
-  hspi1.Init.Direction = SPI_DIRECTION_2LINES;
-  hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
-  hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
-  hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
-  hspi1.Init.NSS = SPI_NSS_SOFT;
-  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8;
-  hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
-  hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
-  hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
-  hspi1.Init.CRCPolynomial = 10;
-  if (HAL_SPI_Init(&hspi1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN SPI1_Init 2 */
-
-  /* USER CODE END SPI1_Init 2 */
-
-}
+//static void MX_SPI1_Init(void)
+//{
+//
+//  /* USER CODE BEGIN SPI1_Init 0 */
+//
+//  /* USER CODE END SPI1_Init 0 */
+//
+//  /* USER CODE BEGIN SPI1_Init 1 */
+//
+//  /* USER CODE END SPI1_Init 1 */
+//  /* SPI1 parameter configuration*/
+//  hspi1.Instance = SPI1;
+//  hspi1.Init.Mode = SPI_MODE_MASTER;
+//  hspi1.Init.Direction = SPI_DIRECTION_2LINES;
+//  hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
+//  hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
+//  hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
+//  hspi1.Init.NSS = SPI_NSS_SOFT;
+//  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8;
+//  hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
+//  hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
+//  hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
+//  hspi1.Init.CRCPolynomial = 10;
+//  if (HAL_SPI_Init(&hspi1) != HAL_OK)
+//  {
+//    Error_Handler();
+//  }
+//  /* USER CODE BEGIN SPI1_Init 2 */
+//
+//  /* USER CODE END SPI1_Init 2 */
+//
+//}
 
 /**
   * @brief GPIO Initialization Function
@@ -309,6 +327,7 @@ static void Netif_Config(void)
     /* create a binary semaphore used for informing ethernetif of frame reception */
     osSemaphoreDef(Netif_SEM);
     Netif_IRQSemaphore = osSemaphoreCreate(osSemaphore(Netif_SEM) , 1);
+//    HAL_GPIO_TogglePin(GPIOD, LD3_Pin);
 
     /* - netif_add(struct netif *netif, struct ip_addr *ipaddr,
     struct ip_addr *netmask, struct ip_addr *gw,
@@ -327,27 +346,35 @@ static void Netif_Config(void)
 
     /*  Registers the default network interface. */
     netif_set_default(&gnetif);
+//    HAL_GPIO_TogglePin(GPIOD, LD4_Pin);
 
     if (netif_is_link_up(&gnetif))
     {
         /* When the netif is fully configured this function must be called.*/
         netif_set_up(&gnetif);
+//        HAL_GPIO_TogglePin(GPIOD, LD3_Pin);
+
     }
     else
     {
         /* When the netif link is down this function must be called */
-        netif_set_down(&gnetif);
+//        netif_set_down(&gnetif);
+        netif_set_up(&gnetif);
+//        HAL_GPIO_TogglePin(GPIOD, LD4_Pin);
     }
 
     /* Set the link callback function, this function is called on change of link status*/
     netif_set_link_callback(&gnetif, ethernetif_update_config);
+//    HAL_GPIO_TogglePin(GPIOD, LD5_Pin);
 
     irq_arg.netif = &gnetif;
     irq_arg.semaphore = Netif_IRQSemaphore;
     /* Create the Ethernet IRQ handler thread */
-    osThreadDef(IrqThr, ethernetif_process_irq, osPriorityRealtime, 0, configMINIMAL_STACK_SIZE * 2);
+    osThreadDef(IrqThr, ethernetif_process_irq, osPriorityRealtime, 0, 512);
 
     osThreadCreate (osThread(IrqThr), &irq_arg);
+//    HAL_GPIO_TogglePin(GPIOD, LD6_Pin);
+
 }
 
 /**
@@ -372,7 +399,7 @@ static void ToggleLed3(void const * argument)
     for( ;; )
     {
         /* Toggle LED3 each 250ms */
-        HAL_GPIO_TogglePin(GPIOE, GPIO_PIN_0);
+        HAL_GPIO_TogglePin(GPIOD, LD4_Pin);
 
         osDelay(250);
     }
@@ -414,8 +441,8 @@ void StartDefaultTask(void const * argument)
 #endif
 
     /* Start toogleLed3 task : Toggle LED3  every 250ms */
-    osThreadDef(LED3, ToggleLed3, osPriorityLow, 0, configMINIMAL_STACK_SIZE);
-    osThreadCreate (osThread(LED3), NULL);
+//    osThreadDef(LED3, ToggleLed3, osPriorityLow, 0, configMINIMAL_STACK_SIZE);
+//    osThreadCreate (osThread(LED3), NULL);
 
     for( ;; )
     {
