@@ -161,7 +161,8 @@ void dhcp_do(struct netif *netif)
           dhcp_stop(netif);
 
 //    BSP_LED_On(LED3);
-    HAL_GPIO_WritePin(GPIOD, LD4_Pin, GPIO_PIN_SET);
+            HAL_GPIO_WritePin(GPIOD, LD4_Pin, GPIO_PIN_SET);
+            HAL_GPIO_WritePin(GPIOD, LD5_Pin, GPIO_PIN_RESET);
         }
         else
         {
@@ -180,7 +181,8 @@ void dhcp_do(struct netif *netif)
             netif_set_addr(netif, &ipaddr , &netmask, &gw);
 
               //    BSP_LED_On(LED4);
-      HAL_GPIO_WritePin(GPIOD, LD5_Pin, GPIO_PIN_SET);
+              HAL_GPIO_WritePin(GPIOD, LD4_Pin, GPIO_PIN_RESET);
+              HAL_GPIO_WritePin(GPIOD, LD5_Pin, GPIO_PIN_SET);
           }
         }
       }

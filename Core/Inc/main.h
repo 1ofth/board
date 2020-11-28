@@ -36,12 +36,12 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
-//#define USE_DHCP       /* enable DHCP, if disabled static address is used*/
-/*Static IP ADDRESS*/
+#define USE_DHCP   1    /* enable DHCP, if disabled static address is used*/
+/*Static IP ADDRESS: IP_ADDR0.IP_ADDR1.IP_ADDR2.IP_ADDR3 */
 #define IP_ADDR0   192
 #define IP_ADDR1   168
-#define IP_ADDR2   43
-#define IP_ADDR3   50
+#define IP_ADDR2   50
+#define IP_ADDR3   199
 
 /*NETMASK*/
 #define NETMASK_ADDR0   255
@@ -52,8 +52,8 @@ extern "C" {
 /*Gateway Address*/
 #define GW_ADDR0   192
 #define GW_ADDR1   168
-#define GW_ADDR2   43
-#define GW_ADDR3   24
+#define GW_ADDR2   50
+#define GW_ADDR3   1
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

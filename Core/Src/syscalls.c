@@ -103,16 +103,8 @@ __attribute__((weak)) int _read(int file, char *ptr, int len)
 return len;
 }
 
-__attribute__((weak)) int _write(int file, char *ptr, int len)
-{
-	int DataIdx;
+extern int _write(int file, char *ptr, int len);
 
-	for (DataIdx = 0; DataIdx < len; DataIdx++)
-	{
-		__io_putchar(*ptr++);
-	}
-	return len;
-}
 
 caddr_t _sbrk(int incr)
 {
