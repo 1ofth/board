@@ -73,8 +73,10 @@ void StartDefaultTask(void const * argument);
 /* USER CODE BEGIN 0 */
 int _write (int fd, char *pBuffer, int size)
 {
+//    char newBuffer[size + 1];
+//    sprintf(newBuffer, "a%s", pBuffer);
     while (CDC_Transmit_FS((unsigned char*)pBuffer, size) != USBD_OK);
-    while (CDC_Transmit_FS((unsigned char*)"\r\n", 2) != USBD_OK);
+//    while (CDC_Transmit_FS((unsigned char*)"\r\n", 2) != USBD_OK);
     return 0;
 }
 
@@ -142,7 +144,7 @@ int main(void)
 
   /* Create the thread(s) */
   /* definition and creation of defaultTask */
-  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
+  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 512);
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
@@ -300,6 +302,10 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI4_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(EXTI4_IRQn);
+
 }
 
 /* USER CODE BEGIN 4 */
@@ -313,6 +319,7 @@ static void Netif_Config(void)
     struct ip_addr ipaddr;
     struct ip_addr netmask;
     struct ip_addr gw;
+//    printf("Netif_Config: start\r\n");
 
     /* IP address setting */
     IP4_ADDR(&ipaddr, IP_ADDR0, IP_ADDR1, IP_ADDR2, IP_ADDR3);
@@ -338,24 +345,27 @@ static void Netif_Config(void)
     your ethernet netif interface. The following code illustrates it's use.*/
 
     netif_add(&gnetif, &ipaddr, &netmask, &gw, NULL, &ethernetif_init, &tcpip_input);
-
+    printf("Netif_Config: netif_add completed\r\n");
     /*  Registers the default network interface. */
     netif_set_default(&gnetif);
+    printf("Netif_Config: netif_set_default completed\r\n");
+
 //    HAL_GPIO_TogglePin(GPIOD, LD4_Pin);
 
     if (netif_is_link_up(&gnetif))
     {
+        printf("netif link up\r\n");
         /* When the netif is fully configured this function must be called.*/
         netif_set_up(&gnetif);
-//        HAL_GPIO_TogglePin(GPIOD, LD3_Pin);
-
+        HAL_GPIO_TogglePin(GPIOD, LD3_Pin);
     }
     else
     {
+        printf("netif link down\r\n");
         /* When the netif link is down this function must be called */
 //        netif_set_down(&gnetif);
         netif_set_up(&gnetif);
-//        HAL_GPIO_TogglePin(GPIOD, LD4_Pin);
+        HAL_GPIO_TogglePin(GPIOD, LD4_Pin);
     }
 
     /* Set the link callback function, this function is called on change of link status*/
@@ -369,6 +379,7 @@ static void Netif_Config(void)
 
     osThreadCreate (osThread(IrqThr), &irq_arg);
 //    HAL_GPIO_TogglePin(GPIOD, LD6_Pin);
+    printf("Netif_Config: end\r\n");
 
 }
 

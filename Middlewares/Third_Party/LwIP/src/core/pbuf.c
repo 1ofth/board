@@ -655,7 +655,7 @@ pbuf_free(struct pbuf *p)
     if (ref == 0) {
       /* remember next pbuf in chain for next iteration */
       q = p->next;
-      LWIP_DEBUGF( PBUF_DEBUG | LWIP_DBG_TRACE, ("pbuf_free: deallocating %p\n", (void *)p));
+      LWIP_DEBUGF( PBUF_DEBUG | LWIP_DBG_TRACE, ("pbuf_free: deallocating %p\r\n", (void *)p));
       type = p->type;
 #if LWIP_SUPPORT_CUSTOM_PBUF
       /* is this a custom pbuf? */
@@ -683,7 +683,7 @@ pbuf_free(struct pbuf *p)
     /* p->ref > 0, this pbuf is still referenced to */
     /* (and so the remaining pbufs in chain as well) */
     } else {
-      LWIP_DEBUGF( PBUF_DEBUG | LWIP_DBG_TRACE, ("pbuf_free: %p has ref %"U16_F", ending here.\n", (void *)p, ref));
+      LWIP_DEBUGF( PBUF_DEBUG | LWIP_DBG_TRACE, ("pbuf_free: %p has ref %"U16_F", ending here.\r\n", (void *)p, ref));
       /* stop walking through the chain */
       p = NULL;
     }

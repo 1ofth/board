@@ -34,6 +34,7 @@
 #include "ethernetif.h"
 #include "enc28j60.h"
 #include <string.h>
+#include <stdio.h>
 
 /* Imported variables --------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/
@@ -137,6 +138,7 @@ void ENC_MSPInit(ENC_HandleTypeDef *heth)
 static void low_level_init(struct netif *netif)
 {
   //uint8_t macaddress[6]= { MAC_ADDR0, MAC_ADDR1, MAC_ADDR2, MAC_ADDR3, MAC_ADDR4, MAC_ADDR5 };
+//    LWIP_DEBUGF(NETIF_DEBUG, ("low_level_init: start\r\n"));
 
   /* Initialize transmit protothread */
 #ifdef USE_PROTOTHREADS
@@ -160,8 +162,11 @@ static void low_level_init(struct netif *netif)
   EncHandle.Init.InterruptEnableBits =  EIE_LINKIE | EIE_PKTIE;
 
   /* configure ethernet peripheral (GPIOs, clocks, MAC, DMA) */
-  ENC_MSPInit(&EncHandle);
-  /* Set netif link flag */
+//    LWIP_DEBUGF(NETIF_DEBUG, ("low_level_init: ENC_MSPInit reached\r\n"));
+    ENC_MSPInit(&EncHandle);
+//    LWIP_DEBUGF(NETIF_DEBUG, ("low_level_init: ENC_MSPInit completed\r\n"));
+
+    /* Set netif link flag */
 //  netif->flags |= NETIF_FLAG_LINK_UP;
 
   /* maximum transfer unit */
@@ -337,9 +342,12 @@ err_t ethernetif_init(struct netif *netif)
 
   netif->output = etharp_output;
   netif->linkoutput = low_level_output;
+//    printf("ethernetif_init: low_level_init reached\r\n");
 
+  LWIP_DEBUGF(NETIF_DEBUG, ("ethernetif_init: low_level_init reached\r\n"));
   /* initialize the hardware */
   low_level_init(netif);
+  LWIP_DEBUGF(NETIF_DEBUG, ("ethernetif_init: low_level_init completed\r\n"));
 
   return ERR_OK;
 }
@@ -385,8 +393,10 @@ void ethernetif_process_irq(void const *argument)
 
   for(;;)
   {
+    printf("ethernetif_process_irq: loop\r\n");
     if (osSemaphoreWait(irq_arg->semaphore, TIME_WAITING_FOR_INPUT) == osOK)
     {
+        printf("ethernetif_process_irq: ENC28J60 interrupt\r\n");
         /* Handle ENC28J60 interrupt */
         tcpip_callback((tcpip_callback_fn) ethernetif_process_irq_do, (void *) argument);
     }

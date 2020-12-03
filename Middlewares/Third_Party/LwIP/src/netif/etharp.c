@@ -1193,16 +1193,16 @@ etharp_raw(struct netif *netif, const struct eth_addr *ethsrc_addr,
   /* could allocate a pbuf for an ARP request? */
   if (p == NULL) {
     LWIP_DEBUGF(ETHARP_DEBUG | LWIP_DBG_TRACE | LWIP_DBG_LEVEL_SERIOUS,
-      ("etharp_raw: could not allocate pbuf for ARP request.\n"));
+      ("etharp_raw: could not allocate pbuf for ARP request.\r\n"));
     ETHARP_STATS_INC(etharp.memerr);
     return ERR_MEM;
   }
-  LWIP_ASSERT("check that first pbuf can hold struct etharp_hdr",
+  LWIP_ASSERT("check that first pbuf can hold struct etharp_hdr\r\n",
               (p->len >= SIZEOF_ETHARP_PACKET));
 
   ethhdr = (struct eth_hdr *)p->payload;
   hdr = (struct etharp_hdr *)((u8_t*)ethhdr + SIZEOF_ETH_HDR);
-  LWIP_DEBUGF(ETHARP_DEBUG | LWIP_DBG_TRACE, ("etharp_raw: sending raw ARP packet.\n"));
+  LWIP_DEBUGF(ETHARP_DEBUG | LWIP_DBG_TRACE, ("etharp_raw: sending raw ARP packet.\r\n"));
   hdr->opcode = htons(opcode);
 
   LWIP_ASSERT("netif->hwaddr_len must be the same as ETHARP_HWADDR_LEN for etharp!",
@@ -1258,7 +1258,7 @@ etharp_raw(struct netif *netif, const struct eth_addr *ethsrc_addr,
 err_t
 etharp_request(struct netif *netif, ip_addr_t *ipaddr)
 {
-  LWIP_DEBUGF(ETHARP_DEBUG | LWIP_DBG_TRACE, ("etharp_request: sending ARP request.\n"));
+  LWIP_DEBUGF(ETHARP_DEBUG | LWIP_DBG_TRACE, ("etharp_request: sending ARP request.\r\n"));
   return etharp_raw(netif, (struct eth_addr *)netif->hwaddr, &ethbroadcast,
                     (struct eth_addr *)netif->hwaddr, &netif->ip_addr, &ethzero,
                     ipaddr, ARP_REQUEST);
@@ -1292,7 +1292,7 @@ ethernet_input(struct pbuf *p, struct netif *netif)
   /* points to packet payload, which starts with an Ethernet header */
   ethhdr = (struct eth_hdr *)p->payload;
   LWIP_DEBUGF(ETHARP_DEBUG | LWIP_DBG_TRACE,
-    ("ethernet_input: dest:%"X8_F":%"X8_F":%"X8_F":%"X8_F":%"X8_F":%"X8_F", src:%"X8_F":%"X8_F":%"X8_F":%"X8_F":%"X8_F":%"X8_F", type:%"X16_F"\n",
+    ("ethernet_input: dest:%"X8_F":%"X8_F":%"X8_F":%"X8_F":%"X8_F":%"X8_F", src:%"X8_F":%"X8_F":%"X8_F":%"X8_F":%"X8_F":%"X8_F", type:%"X16_F"\r\n",
      (unsigned)ethhdr->dest.addr[0], (unsigned)ethhdr->dest.addr[1], (unsigned)ethhdr->dest.addr[2],
      (unsigned)ethhdr->dest.addr[3], (unsigned)ethhdr->dest.addr[4], (unsigned)ethhdr->dest.addr[5],
      (unsigned)ethhdr->src.addr[0], (unsigned)ethhdr->src.addr[1], (unsigned)ethhdr->src.addr[2],

@@ -36,12 +36,12 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
-#define USE_DHCP   1    /* enable DHCP, if disabled static address is used*/
+#define USE_DHCP   0    /* enable DHCP, if disabled static address is used*/
 /*Static IP ADDRESS: IP_ADDR0.IP_ADDR1.IP_ADDR2.IP_ADDR3 */
 #define IP_ADDR0   192
 #define IP_ADDR1   168
-#define IP_ADDR2   50
-#define IP_ADDR3   199
+#define IP_ADDR2   1
+#define IP_ADDR3   100
 
 /*NETMASK*/
 #define NETMASK_ADDR0   255
@@ -52,8 +52,8 @@ extern "C" {
 /*Gateway Address*/
 #define GW_ADDR0   192
 #define GW_ADDR1   168
-#define GW_ADDR2   50
-#define GW_ADDR3   1
+#define GW_ADDR2   1
+#define GW_ADDR3   10
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -81,6 +81,7 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define ENC_INT_Pin GPIO_PIN_4
 #define ENC_INT_GPIO_Port GPIOA
+#define ENC_INT_EXTI_IRQn EXTI4_IRQn
 #define SPI1_SCK_Pin GPIO_PIN_5
 #define SPI1_SCK_GPIO_Port GPIOA
 #define SPI1_MISO_Pin GPIO_PIN_6

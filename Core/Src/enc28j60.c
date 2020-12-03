@@ -79,7 +79,9 @@ Errata 18 is implemented in lwip stack
 */
 
 /* Includes ------------------------------------------------------------------*/
+#include <stdio.h>
 #include "enc28j60.h"
+#include "debug.h"
 
 /** @addtogroup BSP
   * @{
@@ -177,13 +179,18 @@ static void calibrate(void)
     iter_per_us = 1000000;
 
     time = HAL_GetTick();
+    printf("calibrate: %lu\r\n", HAL_GetTick());
+//    LWIP_DEBUGF(NETIF_DEBUG, ("calibrate: %lu\r\n", HAL_GetTick()));
     /* Wait for next tick */
     while (HAL_GetTick() == time) {
+//        printf("calibrate: %lu\r\n", HAL_GetTick());
+//        LWIP_DEBUGF(NETIF_DEBUG, ("calibrate: %lu\r\n", HAL_GetTick()));
         /* wait */
     }
     for (i=0; i<iter_per_us; i++) {
     }
     iter_per_us /= ((HAL_GetTick()-time)*1000);
+    printf("calibrate: calibrated to %lu\r\n", iter_per_us);
 }
 
 /**
@@ -734,9 +741,12 @@ bool ENC_Start(ENC_HandleTypeDef *handle)
 {
     /* register value */
     uint8_t regval;
+//    LWIP_DEBUGF(NETIF_DEBUG, ("ENC_Start: start\r\n"));
 
     /* Calibrate time constant */
     calibrate();
+//    printf("ENC_Start: calibrate completed\r\n");
+    LWIP_DEBUGF(NETIF_DEBUG, ("ENC_Start: calibrate completed\r\n"));
 
     /* System reset */
     enc_reset(handle);
@@ -750,6 +760,7 @@ bool ENC_Start(ENC_HandleTypeDef *handle)
      */
 
     regval = enc_rdbreg(handle, ENC_EREVID);
+    printf("enc rdbreg returned %d", regval);
     if (regval == 0x00 || regval == 0xff) {
         return false;
     }
