@@ -661,7 +661,7 @@ __STATIC_FORCEINLINE void __TZ_set_PSPLIM_NS(uint32_t ProcStackPtrLimit)
   // without main extensions, the non-secure PSPLIM is RAZ/WI
   (void)ProcStackPtrLimit;
 #else
-  __ASM volatile ("MSR psplim_ns, %0\r\n" : : "r" (ProcStackPtrLimit));
+  __ASM volatile ("MSR psplim_ns, %0\n" : : "r" (ProcStackPtrLimit));
 #endif
 }
 #endif

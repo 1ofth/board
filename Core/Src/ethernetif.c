@@ -119,7 +119,7 @@ void ENC_MSPInit(ENC_HandleTypeDef *heth)
 
 #ifdef ENC28J60_INTERRUPT
   /* EXTI interrupt init*/
-  HAL_NVIC_SetPriority(EXTI4_IRQn, 2, 0);
+  HAL_NVIC_SetPriority(EXTI4_IRQn, 0x0F, 0x0F);
   HAL_NVIC_EnableIRQ(EXTI4_IRQn);
 #endif /* ENC28J60_INTERRUPT */
 

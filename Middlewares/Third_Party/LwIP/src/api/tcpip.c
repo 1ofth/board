@@ -211,10 +211,11 @@ err_t
 tcpip_callback_with_block(tcpip_callback_fn function, void *ctx, u8_t block)
 {
   struct tcpip_msg *msg;
-
+  printf("tcpip_callback_with_block\r\n");
   if (sys_mbox_valid(&mbox)) {
     msg = (struct tcpip_msg *)memp_malloc(MEMP_TCPIP_MSG_API);
     if (msg == NULL) {
+      printf("tcpip_callback_with_block: msg == NULL\r\n");
       return ERR_MEM;
     }
 
@@ -226,12 +227,15 @@ tcpip_callback_with_block(tcpip_callback_fn function, void *ctx, u8_t block)
     } else {
       if (sys_mbox_trypost(&mbox, msg) != ERR_OK) {
         memp_free(MEMP_TCPIP_MSG_API, msg);
-        return ERR_MEM;
+          printf("tcpip_callback_with_block: sys_mbox_trypost(&mbox, msg) != ERR_OK\r\n");
+          return ERR_MEM;
       }
     }
-    return ERR_OK;
+      printf("tcpip_callback_with_block: ret ERR_OK\r\n");
+      return ERR_OK;
   }
-  return ERR_VAL;
+    printf("tcpip_callback_with_block: ret ERR_VAL\r\n");
+    return ERR_VAL;
 }
 
 #if LWIP_TCPIP_TIMEOUT
