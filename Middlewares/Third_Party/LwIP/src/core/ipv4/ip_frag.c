@@ -129,13 +129,13 @@ ip_reass_tmr(void)
      * clean up the incomplete fragment assembly */
     if (r->timer > 0) {
       r->timer--;
-      LWIP_DEBUGF(IP_REASS_DEBUG, ("ip_reass_tmr: timer dec %"U16_F"\n",(u16_t)r->timer));
+      LWIP_DEBUGF(IP_REASS_DEBUG, ("ip_reass_tmr: timer dec %"U16_F"\r\n",(u16_t)r->timer));
       prev = r;
       r = r->next;
     } else {
       /* reassembly timed out */
       struct ip_reassdata *tmp;
-      LWIP_DEBUGF(IP_REASS_DEBUG, ("ip_reass_tmr: timer timed out\n"));
+      LWIP_DEBUGF(IP_REASS_DEBUG, ("ip_reass_tmr: timer timed out\r\n"));
       tmp = r;
       /* get the next pointer before freeing */
       r = r->next;
@@ -280,7 +280,7 @@ ip_reass_enqueue_new_datagram(struct ip_hdr *fraghdr, int clen)
 #endif /* IP_REASS_FREE_OLDEST */
     {
       IPFRAG_STATS_INC(ip_frag.memerr);
-      LWIP_DEBUGF(IP_REASS_DEBUG,("Failed to alloc reassdata struct\n"));
+      LWIP_DEBUGF(IP_REASS_DEBUG,("Failed to alloc reassdata struct\r\n"));
       return NULL;
     }
   }
@@ -489,7 +489,7 @@ ip_reass(struct pbuf *p)
   fraghdr = (struct ip_hdr*)p->payload;
 
   if ((IPH_HL(fraghdr) * 4) != IP_HLEN) {
-    LWIP_DEBUGF(IP_REASS_DEBUG,("ip_reass: IP options currently not supported!\n"));
+    LWIP_DEBUGF(IP_REASS_DEBUG,("ip_reass: IP options currently not supported!\r\n"));
     IPFRAG_STATS_INC(ip_frag.err);
     goto nullreturn;
   }
@@ -506,7 +506,7 @@ ip_reass(struct pbuf *p)
 #endif /* IP_REASS_FREE_OLDEST */
     {
       /* No datagram could be freed and still too many pbufs enqueued */
-      LWIP_DEBUGF(IP_REASS_DEBUG,("ip_reass: Overflow condition: pbufct=%d, clen=%d, MAX=%d\n",
+      LWIP_DEBUGF(IP_REASS_DEBUG,("ip_reass: Overflow condition: pbufct=%d, clen=%d, MAX=%d\r\n",
         ip_reass_pbufcount, clen, IP_REASS_MAX_PBUFS));
       IPFRAG_STATS_INC(ip_frag.memerr);
       /* @todo: send ICMP time exceeded here? */
@@ -522,7 +522,7 @@ ip_reass(struct pbuf *p)
        in the reassembly buffer. If so, we proceed with copying the
        fragment into the buffer. */
     if (IP_ADDRESSES_AND_ID_MATCH(&ipr->iphdr, fraghdr)) {
-      LWIP_DEBUGF(IP_REASS_DEBUG, ("ip_reass: matching previous fragment ID=%"X16_F"\n",
+      LWIP_DEBUGF(IP_REASS_DEBUG, ("ip_reass: matching previous fragment ID=%"X16_F"\r\n",
         ntohs(IPH_ID(fraghdr))));
       IPFRAG_STATS_INC(ip_frag.cachehit);
       break;
@@ -559,7 +559,7 @@ ip_reass(struct pbuf *p)
     ipr->flags |= IP_REASS_FLAG_LASTFRAG;
     ipr->datagram_len = offset + len;
     LWIP_DEBUGF(IP_REASS_DEBUG,
-     ("ip_reass: last fragment seen, total len %"S16_F"\n",
+     ("ip_reass: last fragment seen, total len %"S16_F"\r\n",
       ipr->datagram_len));
   }
   /* find the right place to insert this pbuf */
@@ -602,11 +602,11 @@ ip_reass(struct pbuf *p)
     return p;
   }
   /* the datagram is not (yet?) reassembled completely */
-  LWIP_DEBUGF(IP_REASS_DEBUG,("ip_reass_pbufcount: %d out\n", ip_reass_pbufcount));
+  LWIP_DEBUGF(IP_REASS_DEBUG,("ip_reass_pbufcount: %d out\r\n", ip_reass_pbufcount));
   return NULL;
 
 nullreturn:
-  LWIP_DEBUGF(IP_REASS_DEBUG,("ip_reass: nullreturn\n"));
+  LWIP_DEBUGF(IP_REASS_DEBUG,("ip_reass: nullreturn\r\n"));
   IPFRAG_STATS_INC(ip_frag.drop);
   pbuf_free(p);
   return NULL;
@@ -696,7 +696,7 @@ ip_frag(struct pbuf *p, struct netif *netif, ip_addr_t *dest)
    */
   rambuf = pbuf_alloc(PBUF_LINK, 0, PBUF_REF);
   if (rambuf == NULL) {
-    LWIP_DEBUGF(IP_REASS_DEBUG, ("ip_frag: pbuf_alloc(PBUF_LINK, 0, PBUF_REF) failed\n"));
+    LWIP_DEBUGF(IP_REASS_DEBUG, ("ip_frag: pbuf_alloc(PBUF_LINK, 0, PBUF_REF) failed\r\n"));
     return ERR_MEM;
   }
   rambuf->tot_len = rambuf->len = mtu;
@@ -831,7 +831,7 @@ ip_frag(struct pbuf *p, struct netif *netif, ip_addr_t *dest)
       snmp_inc_ipfragcreates();
       pbuf_free(header);
     } else {
-      LWIP_DEBUGF(IP_REASS_DEBUG, ("ip_frag: pbuf_alloc() for header failed\n"));
+      LWIP_DEBUGF(IP_REASS_DEBUG, ("ip_frag: pbuf_alloc() for header failed\r\n"));
       pbuf_free(rambuf);
       return ERR_MEM;
     }

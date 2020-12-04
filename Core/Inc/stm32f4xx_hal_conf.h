@@ -203,12 +203,12 @@
 /* Section 1 : Ethernet peripheral configuration */
 
 /* MAC ADDRESS: MAC_ADDR0:MAC_ADDR1:MAC_ADDR2:MAC_ADDR3:MAC_ADDR4:MAC_ADDR5 */
-#define MAC_ADDR0   2U
-#define MAC_ADDR1   10U
-#define MAC_ADDR2   20U
-#define MAC_ADDR3   30U
-#define MAC_ADDR4   40U
-#define MAC_ADDR5   50U
+#define MAC_ADDR0   84U
+#define MAC_ADDR1   228U
+#define MAC_ADDR2   58U
+#define MAC_ADDR3   172U
+#define MAC_ADDR4   162U
+#define MAC_ADDR5   106U
 
 /* Definition of the Ethernet driver buffers size and count */
 #define ETH_RX_BUF_SIZE                ETH_MAX_PACKET_SIZE /* buffer size for receive               */

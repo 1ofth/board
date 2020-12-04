@@ -83,7 +83,7 @@ stats_display_proto(struct stats_proto *proto, const char *name)
   LWIP_PLATFORM_DIAG(("proterr: %"STAT_COUNTER_F"\n\t", proto->proterr)); 
   LWIP_PLATFORM_DIAG(("opterr: %"STAT_COUNTER_F"\n\t", proto->opterr)); 
   LWIP_PLATFORM_DIAG(("err: %"STAT_COUNTER_F"\n\t", proto->err)); 
-  LWIP_PLATFORM_DIAG(("cachehit: %"STAT_COUNTER_F"\n", proto->cachehit)); 
+  LWIP_PLATFORM_DIAG(("cachehit: %"STAT_COUNTER_F"\r\n", proto->cachehit));
 }
 
 #if IGMP_STATS
@@ -99,8 +99,8 @@ stats_display_igmp(struct stats_igmp *igmp)
   LWIP_PLATFORM_DIAG(("memerr: %"STAT_COUNTER_F"\n\t", igmp->memerr)); 
   LWIP_PLATFORM_DIAG(("proterr: %"STAT_COUNTER_F"\n\t", igmp->proterr)); 
   LWIP_PLATFORM_DIAG(("rx_v1: %"STAT_COUNTER_F"\n\t", igmp->rx_v1)); 
-  LWIP_PLATFORM_DIAG(("rx_group: %"STAT_COUNTER_F"\n", igmp->rx_group));
-  LWIP_PLATFORM_DIAG(("rx_general: %"STAT_COUNTER_F"\n", igmp->rx_general));
+  LWIP_PLATFORM_DIAG(("rx_group: %"STAT_COUNTER_F"\r\n", igmp->rx_group));
+  LWIP_PLATFORM_DIAG(("rx_general: %"STAT_COUNTER_F"\r\n", igmp->rx_general));
   LWIP_PLATFORM_DIAG(("rx_report: %"STAT_COUNTER_F"\n\t", igmp->rx_report)); 
   LWIP_PLATFORM_DIAG(("tx_join: %"STAT_COUNTER_F"\n\t", igmp->tx_join)); 
   LWIP_PLATFORM_DIAG(("tx_leave: %"STAT_COUNTER_F"\n\t", igmp->tx_leave)); 
@@ -116,7 +116,7 @@ stats_display_mem(struct stats_mem *mem, const char *name)
   LWIP_PLATFORM_DIAG(("avail: %"U32_F"\n\t", (u32_t)mem->avail)); 
   LWIP_PLATFORM_DIAG(("used: %"U32_F"\n\t", (u32_t)mem->used)); 
   LWIP_PLATFORM_DIAG(("max: %"U32_F"\n\t", (u32_t)mem->max)); 
-  LWIP_PLATFORM_DIAG(("err: %"U32_F"\n", (u32_t)mem->err));
+  LWIP_PLATFORM_DIAG(("err: %"U32_F"\r\n", (u32_t)mem->err));
 }
 
 #if MEMP_STATS

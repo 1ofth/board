@@ -124,6 +124,7 @@ int main(void)
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
   MX_USB_DEVICE_Init();
+//NVIC_SetPriorityGrouping( NVIC_PRIORITYGROUP_4);
   /* USER CODE END 2 */
 
   /* USER CODE BEGIN RTOS_MUTEX */
@@ -303,7 +304,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
   /* EXTI interrupt init*/
-  HAL_NVIC_SetPriority(EXTI4_IRQn, 5, 0);
+  HAL_NVIC_SetPriority(EXTI4_IRQn, 4, 0);
   HAL_NVIC_EnableIRQ(EXTI4_IRQn);
 
 }
@@ -357,7 +358,7 @@ static void Netif_Config(void)
         printf("netif link up\r\n");
         /* When the netif is fully configured this function must be called.*/
         netif_set_up(&gnetif);
-        HAL_GPIO_TogglePin(GPIOD, LD3_Pin);
+//        HAL_GPIO_TogglePin(GPIOD, LD3_Pin);
     }
     else
     {
@@ -365,7 +366,7 @@ static void Netif_Config(void)
         /* When the netif link is down this function must be called */
 //        netif_set_down(&gnetif);
         netif_set_up(&gnetif);
-        HAL_GPIO_TogglePin(GPIOD, LD4_Pin);
+//        HAL_GPIO_TogglePin(GPIOD, LD4_Pin);
     }
 
     /* Set the link callback function, this function is called on change of link status*/
@@ -375,7 +376,7 @@ static void Netif_Config(void)
     irq_arg.netif = &gnetif;
     irq_arg.semaphore = Netif_IRQSemaphore;
     /* Create the Ethernet IRQ handler thread */
-    osThreadDef(IrqThr, ethernetif_process_irq, osPriorityRealtime, 0, 512);
+    osThreadDef(IrqThr, ethernetif_process_irq, osPriorityRealtime, 0, 1024);
 
     osThreadCreate (osThread(IrqThr), &irq_arg);
 //    HAL_GPIO_TogglePin(GPIOD, LD6_Pin);
@@ -400,14 +401,14 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
   * @param  pvParameters not used
   * @retval None
   */
-static void ToggleLed3(void const * argument)
+void ToggleLed3(void const * argument)
 {
     for( ;; )
     {
         /* Toggle LED3 each 250ms */
-        HAL_GPIO_TogglePin(GPIOD, LD4_Pin);
+        HAL_GPIO_TogglePin(GPIOD, LD6_Pin);
 
-        osDelay(250);
+        osDelay(500);
     }
 }
 /* USER CODE END 4 */
@@ -430,7 +431,7 @@ void StartDefaultTask(void const * argument)
     Netif_Config();
 
     /* Initialize webserver demo */
-    http_server_netconn_init();
+//    http_server_netconn_init();
 
     /* Notify user about the netwoek interface config */
     User_notification(&gnetif);
@@ -447,8 +448,8 @@ void StartDefaultTask(void const * argument)
 #endif
 
     /* Start toogleLed3 task : Toggle LED3  every 250ms */
-//    osThreadDef(LED3, ToggleLed3, osPriorityLow, 0, configMINIMAL_STACK_SIZE);
-//    osThreadCreate (osThread(LED3), NULL);
+    osThreadDef(toogleLed3, ToggleLed3, osPriorityLow, 0, configMINIMAL_STACK_SIZE);
+    osThreadCreate (osThread(toogleLed3), NULL);
 
     for( ;; )
     {

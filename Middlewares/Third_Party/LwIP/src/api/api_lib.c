@@ -417,7 +417,7 @@ netconn_recv_data(struct netconn *conn, void **new_buf)
   /* Register event with callback */
   API_EVENT(conn, NETCONN_EVT_RCVMINUS, len);
 
-  LWIP_DEBUGF(API_LIB_DEBUG, ("netconn_recv_data: received %p, len=%"U16_F"\n", buf, len));
+  LWIP_DEBUGF(API_LIB_DEBUG, ("netconn_recv_data: received %p, len=%"U16_F"\r\n", buf, len));
 
   *new_buf = buf;
   /* don't set conn->last_err: it's only ERR_OK, anyway */
@@ -571,7 +571,7 @@ netconn_send(struct netconn *conn, struct netbuf *buf)
 
   LWIP_ERROR("netconn_send: invalid conn",  (conn != NULL), return ERR_ARG;);
 
-  LWIP_DEBUGF(API_LIB_DEBUG, ("netconn_send: sending %"U16_F" bytes\n", buf->p->tot_len));
+  LWIP_DEBUGF(API_LIB_DEBUG, ("netconn_send: sending %"U16_F" bytes\r\n", buf->p->tot_len));
   msg.function = do_send;
   msg.msg.conn = conn;
   msg.msg.msg.b = buf;

@@ -26,6 +26,7 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
+#include <stdio.h>
 #include "lwip/opt.h"
 #include "main.h"
 #include "lwip/dhcp.h"
@@ -95,7 +96,7 @@ void ethernetif_notify_conn_changed(struct netif *netif)
     IP4_ADDR(&netmask, NETMASK_ADDR0, NETMASK_ADDR1 , NETMASK_ADDR2, NETMASK_ADDR3);
     IP4_ADDR(&gw, GW_ADDR0, GW_ADDR1, GW_ADDR2, GW_ADDR3);
 #endif /* USE_DHCP */
-
+    printf("netif_is_link_up is true!\r\n");
     netif_set_addr(netif, &ipaddr , &netmask, &gw);
     /* When the netif is fully configured this function must be called.*/
     netif_set_up(netif);
@@ -111,6 +112,7 @@ void ethernetif_notify_conn_changed(struct netif *netif)
     /* Update DHCP state machine */
     DHCP_state = DHCP_LINK_DOWN;
 #endif /* USE_DHCP */
+    printf("netif_is_link_up is false!\r\n");
 
     /*  When the netif link is down this function must be called.*/
     netif_set_down(netif);

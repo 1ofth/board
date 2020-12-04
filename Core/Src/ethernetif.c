@@ -360,7 +360,7 @@ err_t ethernetif_init(struct netif *netif)
 void ethernetif_process_irq_do(void const *argument)
 {
     struct enc_irq_str *irq_arg = (struct enc_irq_str *)argument;
-
+    printf("ethernetif_process_irq_do\r\n");
     /* Handle ENC28J60 interrupt */
     ENC_IRQHandler(&EncHandle);
 

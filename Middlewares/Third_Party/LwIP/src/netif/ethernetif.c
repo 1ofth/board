@@ -280,7 +280,7 @@ ethernetif_init(struct netif *netif)
     
   ethernetif = mem_malloc(sizeof(struct ethernetif));
   if (ethernetif == NULL) {
-    LWIP_DEBUGF(NETIF_DEBUG, ("ethernetif_init: out of memory\n"));
+    LWIP_DEBUGF(NETIF_DEBUG, ("ethernetif_init: out of memory\r\n"));
     return ERR_MEM;
   }
 
