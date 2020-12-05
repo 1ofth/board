@@ -1236,6 +1236,7 @@ bool ENC_GetReceivedFrame(ENC_HandleTypeDef *handle)
 
     pktcnt = enc_rdbreg(handle, ENC_EPKTCNT);
     if (pktcnt == 0) {
+        printf("ENC_GetReceivedFrame: pktcnt == 0\r\n");
         return false;
     };
 

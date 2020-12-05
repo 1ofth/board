@@ -178,7 +178,8 @@ static void low_level_init(struct netif *netif)
 
   /* Start the EN28J60 module */
   if (ENC_Start(&EncHandle)) {
-    /* Set the MAC address */
+      LWIP_DEBUGF(NETIF_DEBUG, ("low_level_init: ENC_Started\r\n"));
+      /* Set the MAC address */
     ENC_SetMacAddr(&EncHandle);
 
     /* Set netif link flag */
@@ -263,7 +264,8 @@ static struct pbuf * low_level_input(struct netif *netif)
   uint32_t bufferoffset = 0;
 
   if (!ENC_GetReceivedFrame(&EncHandle)) {
-    return NULL;
+      printf("ethernetif_input_do: ENC_GetReceivedFrame false \r\n");
+      return NULL;
   }
 
   /* Obtain the size of the packet and put it into the "len" variable. */
@@ -306,6 +308,7 @@ void ethernetif_input_do(struct netif * netif)
 
     do {
         p = low_level_input(netif);
+        printf("ethernetif_input_do: p %p\r\n", (void *)p);
         if (p != NULL)
         {
           if (netif->input(p, netif) != ERR_OK )
@@ -366,15 +369,19 @@ void ethernetif_process_irq_do(void const *argument)
 
     /* Check whether the link is up or down*/
     if ((EncHandle.interruptFlags & EIE_LINKIE) != 0) {
+        printf("ethernetif_process_irq_do:  (EncHandle.interruptFlags & EIE_LINKIE) != 0)\r\n");
         if((EncHandle.LinkStatus & PHSTAT2_LSTAT)!= 0) {
+            printf("ethernetif_process_irq_do:  netif_set_link_up\r\n");
             netif_set_link_up(irq_arg->netif);
         } else {
+            printf("ethernetif_process_irq_do:  netif_set_link_down\r\n");
             netif_set_link_down(irq_arg->netif);
         }
     }
 
     /* Check whether we have received a packet */
     if((EncHandle.interruptFlags & EIR_PKTIF) != 0) {
+        printf("ethernetif_process_irq_do:  we have received a packet\r\n");
         ethernetif_input_do(irq_arg->netif);
     }
 

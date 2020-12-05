@@ -161,6 +161,7 @@ err_t
 tcpip_input(struct pbuf *p, struct netif *inp)
 {
 #if LWIP_TCPIP_CORE_LOCKING_INPUT
+    printf("tcpip_input: LWIP_TCPIP_CORE_LOCKING_INPUT start\r\n");
   err_t ret;
   LWIP_DEBUGF(TCPIP_DEBUG, ("tcpip_input: PACKET %p/%p\r\n", (void *)p, (void *)inp));
   LOCK_TCPIP_CORE();
@@ -176,13 +177,17 @@ tcpip_input(struct pbuf *p, struct netif *inp)
   return ret;
 #else /* LWIP_TCPIP_CORE_LOCKING_INPUT */
   struct tcpip_msg *msg;
+    printf("tcpip_input: start\r\n");
+    LWIP_DEBUGF(TCPIP_DEBUG, ("tcpip_input: PACKET %p/%p\r\n", (void *)p, (void *)inp));
 
   if (!sys_mbox_valid(&mbox)) {
-    return ERR_VAL;
+      printf("tcpip_input: sys_mbox_valid FALSE\r\n");
+      return ERR_VAL;
   }
   msg = (struct tcpip_msg *)memp_malloc(MEMP_TCPIP_MSG_INPKT);
   if (msg == NULL) {
-    return ERR_MEM;
+      printf("tcpip_input: msg == NULL \r\n");
+      return ERR_MEM;
   }
 
   msg->type = TCPIP_MSG_INPKT;
@@ -190,9 +195,11 @@ tcpip_input(struct pbuf *p, struct netif *inp)
   msg->msg.inp.netif = inp;
   if (sys_mbox_trypost(&mbox, msg) != ERR_OK) {
     memp_free(MEMP_TCPIP_MSG_INPKT, msg);
-    return ERR_MEM;
+      printf("tcpip_input: ERR_MEM\r\n");
+      return ERR_MEM;
   }
-  return ERR_OK;
+    printf("tcpip_input: ERR_OK\r\n");
+    return ERR_OK;
 #endif /* LWIP_TCPIP_CORE_LOCKING_INPUT */
 }
 
